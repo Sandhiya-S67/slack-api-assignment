@@ -2,30 +2,30 @@
 
 A Node.js application that interacts with Slack's API to send, schedule, retrieve, edit, and delete messages in a developer sandbox environment.
 
-## 📌 Assignment Overview
+## Assignment Overview
 **Objective**: Build a Slack bot that performs messaging operations using Slack's API in a sandbox environment.
 
 ### Core Tasks Implemented
-✅ **Authentication**  
+ **Authentication**  
 - OAuth token-based authentication with Slack API (`xoxb-` bot token).  
 
-✅ **Messaging Operations**  
+ **Messaging Operations**  
 - **Send messages** to channels (`chat.postMessage`).  
 - **Schedule messages** for future delivery (`chat.scheduleMessage`).  
 - **Retrieve messages** by timestamp (`conversations.history`).  
 - **Edit messages** (`chat.update`).  
 - **Delete messages** (`chat.delete`).  
 
-✅ **Developer Sandbox**  
+**Developer Sandbox**  
 - Tested in an isolated Slack sandbox workspace to avoid impacting production data.  
 
-## 🛠️ Technologies Used
+##  Technologies Used
 - **Node.js** (v18+)  
 - **Express.js** (REST API server)  
 - **Axios** (HTTP requests to Slack API)  
 - **dotenv** (environment variables)  
 
-## 🚀 Setup Instructions
+##  Setup Instructions
 
 ### Prerequisites
 1. **Slack Workspace**: Access to a Slack workspace (or sandbox).  
@@ -57,7 +57,7 @@ Server starts at `http://localhost:5000`.
 
 ---
 
-## 📡 API Endpoints
+##  API Endpoints
 | Endpoint       | Method | Description                          | Request Body Example                          |
 |----------------|--------|--------------------------------------|-----------------------------------------------|
 | `/send`        | POST   | Send a message                       | `{ "text": "Hello!", "channel": "C12345678" }` |
@@ -68,7 +68,7 @@ Server starts at `http://localhost:5000`.
 
 ---
 
-## 🧪 Testing
+##  Testing
 1. **Using Postman/Thunder Client**:  
    - Import the included `Slack_Bot_API_Collection.json` (if available).  
    - Example request to send a message:  
