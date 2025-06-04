@@ -6,7 +6,6 @@ const slack = require("./utils/slack");
 const app = express();
 app.use(bodyParser.json());
 
-// Route: Send Message
 app.post("/send", async (req, res) => {
   const { text, channel } = req.body;
   try {
@@ -20,7 +19,6 @@ app.post("/send", async (req, res) => {
   }
 });
 
-// Route: Schedule Message
 app.post("/schedule", async (req, res) => {
   const { text, date, time, channel } = req.body;
   try {
@@ -34,7 +32,6 @@ app.post("/schedule", async (req, res) => {
   }
 });
 
-// Route: Get Messages
 app.get("/messages", async (req, res) => {
   const { channel } = req.query;
   try {
@@ -45,7 +42,6 @@ app.get("/messages", async (req, res) => {
   }
 });
 
-// Route: Edit Message
 app.post("/edit", async (req, res) => {
   const { date, time, newText, channel } = req.body;
   try {
@@ -59,7 +55,6 @@ app.post("/edit", async (req, res) => {
   }
 });
 
-// Route: Delete Message
 app.delete("/delete", async (req, res) => {
   const { date, time, channel } = req.body;
   try {
