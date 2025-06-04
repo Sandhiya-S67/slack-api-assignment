@@ -3,7 +3,7 @@ const { promisify } = require("util");
 const sleep = promisify(setTimeout);
 
 const SLACK_API = "https://slack.com/api";
-const MESSAGE_SEARCH_TIMEOUT = 5000; // 5 seconds timeout
+const MESSAGE_SEARCH_TIMEOUT = 5000;
 const MAX_RETRIES = 2;
 
 const headers = {
@@ -11,11 +11,9 @@ const headers = {
   "Content-Type": "application/json",
 };
 
-// Simple cache for recent messages
 const messageCache = new Map();
-const CACHE_TTL = 30000; // 30 seconds
+const CACHE_TTL = 30000; 
 
-// Helper: Parse date and time into Unix timestamp
 function parseDateTime(dateStr, timeStr) {
   try {
     if (!dateStr || !timeStr) {
@@ -49,7 +47,6 @@ function parseDateTime(dateStr, timeStr) {
   }
 }
 
-// Helper: Check if bot is in channel
 async function isBotInChannel(channel) {
   try {
     const botRes = await axios.get(`${SLACK_API}/auth.test`, { headers });
@@ -67,7 +64,6 @@ async function isBotInChannel(channel) {
   }
 }
 
-// Helper: Join channel if not a member
 async function joinChannel(channel) {
   try {
     const res = await axios.post(
@@ -87,7 +83,6 @@ async function joinChannel(channel) {
   }
 }
 
-// Ensure bot is in channel with retry
 async function ensureBotInChannel(channel) {
   try {
     if (!channel || !['C', 'G', 'D'].includes(channel[0])) {
@@ -106,11 +101,9 @@ async function ensureBotInChannel(channel) {
   }
 }
 
-// Find message by timestamp with timeout and retries
 async function findMessageByTimestamp(channel, timestamp) {
   const cacheKey = `${channel}:${timestamp}`;
   
-  // Check cache first
   if (messageCache.has(cacheKey)) {
     const cached = messageCache.get(cacheKey);
     if (Date.now() - cached.timestamp < CACHE_TTL) {
@@ -124,38 +117,33 @@ async function findMessageByTimestamp(channel, timestamp) {
 
   while (retries <= MAX_RETRIES) {
     try {
-      // Create a timeout promise
       const timeoutPromise = sleep(MESSAGE_SEARCH_TIMEOUT).then(() => {
         throw new Error("Message search timed out");
       });
 
-      // Create the search promise
       const searchPromise = axios.get(`${SLACK_API}/conversations.history`, {
         params: { 
           channel, 
-          oldest: timestamp - 2, // 2 seconds before
-          latest: timestamp + 2, // 2 seconds after
+          oldest: timestamp - 2, 
+          latest: timestamp + 2, 
           inclusive: true,
           limit: 5
         },
         headers,
       });
 
-      // Race between search and timeout
       const res = await Promise.race([searchPromise, timeoutPromise]);
 
       if (!res.data.ok || !res.data.messages || res.data.messages.length === 0) {
         throw new Error("Message not found at the specified time");
       }
 
-      // Find the closest message to the requested timestamp
       const closestMessage = res.data.messages.reduce((prev, curr) => {
         const prevDiff = Math.abs(parseFloat(prev.ts) - timestamp);
         const currDiff = Math.abs(parseFloat(curr.ts) - timestamp);
         return currDiff < prevDiff ? curr : prev;
       });
 
-      // Cache the result
       messageCache.set(cacheKey, {
         message: closestMessage,
         timestamp: Date.now()
@@ -168,14 +156,13 @@ async function findMessageByTimestamp(channel, timestamp) {
         console.error(`findMessageByTimestamp failed after ${retries} retries: ${error.message}`);
         throw new Error(`Failed to find message: ${error.message}`);
       }
-      await sleep(500 * retries); // Exponential backoff
+      await sleep(500 * retries); 
     }
   }
 
   throw new Error("Max retries reached while searching for message");
 }
 
-// Retrieve messages
 async function getMessages(channel) {
   try {
     await ensureBotInChannel(channel);
@@ -193,7 +180,6 @@ async function getMessages(channel) {
       throw new Error(res.data.error || "Failed to get messages");
     }
     
-    // Cache the messages
     if (res.data.messages) {
       res.data.messages.forEach(msg => {
         const cacheKey = `${channel}:${msg.ts}`;
@@ -211,7 +197,6 @@ async function getMessages(channel) {
   }
 }
 
-// Send message
 async function sendMessage(channel, text) {
   try {
     await ensureBotInChannel(channel);
@@ -236,7 +221,6 @@ async function sendMessage(channel, text) {
   }
 }
 
-// Schedule a message
 async function scheduleMessage(channel, text, date, time) {
   try {
     await ensureBotInChannel(channel);
@@ -270,7 +254,6 @@ async function scheduleMessage(channel, text, date, time) {
   }
 }
 
-// Edit a message
 async function editMessage(channel, date, time, newText) {
   try {
     await ensureBotInChannel(channel);
@@ -293,7 +276,6 @@ async function editMessage(channel, date, time, newText) {
       throw new Error(res.data.error || "Failed to edit message");
     }
     
-    // Update cache
     const cacheKey = `${channel}:${message.ts}`;
     messageCache.set(cacheKey, {
       message: { ...message, text: newText },
@@ -312,7 +294,6 @@ async function editMessage(channel, date, time, newText) {
   }
 }
 
-// Delete a message
 async function deleteMessage(channel, date, time) {
   try {
     await ensureBotInChannel(channel);
@@ -333,7 +314,6 @@ async function deleteMessage(channel, date, time) {
       throw new Error(res.data.error || "Failed to delete message");
     }
     
-    // Clear from cache
     const cacheKey = `${channel}:${message.ts}`;
     messageCache.delete(cacheKey);
     
