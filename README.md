@@ -64,8 +64,7 @@ Server starts at `http://localhost:5000`.
 ---
 
 ##  Testing
-1. **Using Postman/Thunder Client**:  
-   - Import the included `Slack_Bot_API_Collection.json` (if available).  
+1. **Using Postman/Thunder Client**:   
    - Example request to send a message:  
      ```json
      {
