@@ -36,17 +36,12 @@ A Node.js application that interacts with Slack's API to send, schedule, retriev
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/slack-messaging-bot.git
-   cd slack-messaging-bot
+   git clone https://github.com/Sandhiya-S67/slack-api-assignment.git
+   cd slack-api-assignment
    ```
 2. Install dependencies:
    ```bash
    npm install
-   ```
-3. Create a `.env` file (use `.env.example` template):
-   ```env
-   SLACK_BOT_TOKEN=xoxb-your-bot-token-here
-   PORT=5000  # Optional
    ```
 
 ### Running the Server
